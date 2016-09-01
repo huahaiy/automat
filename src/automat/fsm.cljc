@@ -19,7 +19,9 @@
   (defn- new-generation []
     (swap! cnt inc))
   (defn reset-generations []
-    (reset! cnt 0)))
+    (reset! cnt 0))
+  (defn show-generation []
+    (println @cnt)))
 
 (#?(:clj deftype+ :cljs deftype) State
   [generation
@@ -732,11 +734,18 @@
 (defn complement
   "Returns the complement of the given automaton."
   [fsm]
-  ((if (deterministic? fsm) dfa nfa)
-   (start fsm)
-   (set/difference (states fsm) (accept fsm))
-   (zipmap* (states fsm) #(input->state fsm %))
-   (zipmap* (states fsm) #(input->actions fsm %))))
+  (let [fsm (->dfa fsm)
+        st  (state)]
+    (dfa
+     (start fsm)
+     (set/union #{st} (set/difference (states fsm) (accept fsm)))
+     (merge (zipmap* (states fsm)
+                     #(let [tr (input->state fsm %)]
+                        (if (contains? tr default)
+                          tr
+                          (merge tr {default st}))))
+            {st {default st}})
+     (zipmap* (states fsm) #(input->actions fsm %)))))
 
 (defn intersection
   "Returns the intersection of multiple automata."

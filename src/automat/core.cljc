@@ -15,7 +15,7 @@
              CompiledAutomatonState])))
 
 (def is-identical? #?(:clj identical? :cljs keyword-identical?))
-  
+
 (defn $
   "Defines a state tag, which can be correlated to a reducer function using `compile`."
   [tag]

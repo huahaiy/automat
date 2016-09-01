@@ -14,9 +14,11 @@
     (concat
       [(gen/return [:concat :a])
        (gen/return [:concat :b])
+       (gen/return [:concat :c])
+       (gen/return [:concat :d])
        (gen/return [:not [[:concat :a]]])]
       (when (pos? size)
-        (let [gen-actions' (gen/resize (quot size 4) (gen/sized gen-actions))]
+        (let [gen-actions' (gen/resize (quot size 8) (gen/sized gen-actions))]
           [(gen/return [:kleene])
            (gen/tuple (gen/return :or) (gen/list gen-actions'))
            (gen/tuple (gen/return :and) (gen/list gen-actions'))
@@ -49,7 +51,7 @@
   (prop/for-all
     [actions-a (gen/tuple (gen/sized gen-actions))
      actions-b (gen/tuple (gen/sized gen-actions))
-     inputs (gen/list (gen/list (gen/elements [:a :b])))]
+     inputs (gen/list (gen/list (gen/elements [:a :b :c :d])))]
     (fsm/reset-generations)
     (pr '.) (flush)
     (let [fsm-a (compiler/parse-automata (construct-automaton actions-a))
