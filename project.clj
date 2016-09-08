@@ -2,16 +2,14 @@
   :description ""
   :license {:name "MIT License"
             :url "http://opensource.org/licenses/MIT"}
-  :dependencies [[rhizome "0.2.5"]
-                 [primitive-math "0.1.4"]
+  :dependencies [[rhizome "0.2.7"]
+                 [primitive-math "0.1.5"]
                  [potemkin "0.4.3"]
                  [proteus "0.1.6"]]
   :profiles {:dev {:dependencies [[org.clojure/clojure "1.8.0"]
-                                  [org.clojure/clojurescript "1.7.228"]
-
+                                  [org.clojure/clojurescript "1.9.183"]
                                   [org.clojure/test.check "0.9.0"]
-                                  [criterium "0.4.3"]
-                                  [codox-md "0.2.0" :exclusions [org.clojure/clojure]]]
+                                  [criterium "0.4.4"]]
                    ;:prep-tasks ["compile" "javac"]
                    :auto-clean false
                    :aliases {"clean-test" ["do" "clean," "javac," "compile," "test," "cljsbuild" "test"]
@@ -26,7 +24,7 @@
   :jar-exclusions [#"\.DS_Store"]
   :source-paths ["src" "target/src" "target/classes"]
   :test-paths ["test" "target/test"]
-  :plugins [[codox "0.9.3"]
+  :plugins [[lein-codox "0.9.4"]
             [com.cemerick/clojurescript.test "0.3.3"]
             [lein-cljsbuild "1.1.2"]]
   :cljsbuild {:builds [{:source-paths ["src" "test"]
@@ -41,5 +39,6 @@
                  ["private"
                   {:url "s3p://juji-mvn-repository/releases/"
                    :username :env :passphrase :env}]]
-  :codox {:writer codox-md.writer/write-docs
-          :include [automat.core automat.viz]})
+  :codox {:source-uri "https://github.com/ztellman/automat/blob/master/{filepath}#L{line}"
+          :metadata {:doc/format :markdown}
+          :namespaces [automat.core automat.viz]})
