@@ -36,7 +36,9 @@
               stream-index
               value))
 
-          (let [state'' (get-in fsm [:state->input->state state input])
+          (let [state'' (if-let [candidates (:signal-candidates input)]
+                          (some #(get-in fsm [:state->input->state state %]) candidates)
+                          (get-in fsm [:state->input->state state input]))
                 state'  (or state'' (get-in fsm [:state->input->state state fsm/default]))
                 default? (not (identical? state'' state'))
                 value' (if state'

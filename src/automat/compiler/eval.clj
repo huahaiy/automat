@@ -105,7 +105,9 @@
                                         (fn [[[state actions] inputs]]
                                           (let [inputs (remove #{fsm/default} inputs)]
                                             (when (not (empty? inputs))
-                                              `(~(inputs-predicate numeric? `signal## inputs)
+                                              `(~(if-let [candidates## (:signal-candidates `signal##)]
+                                                   (some #(inputs-predicate numeric? % inputs) candidates##)
+                                                   (inputs-predicate numeric? `signal## inputs))
                                                 (do
 
                                                   ;; update value
