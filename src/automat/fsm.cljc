@@ -731,7 +731,42 @@
         state->input->state
         state->input->actions))))
 
+(defn parse-automata
+  "Takes either an input, automaton, or sequence of automatons and inputs,
+   and returns their concatenation."
+  [s]
+  (let [s (if (sequential? s)
+            s
+            [s])]
+    (if (empty? s)
+      (empty-automaton)
+      (->> s
+           (cons (empty-automaton))
+           (map
+            #(cond
+               (automaton? %) %
+               (vector? %)        (parse-automata %)
+               :else              (automaton %)))
+           (apply concat)
+           minimize))))
+
 (defn complement
+  "Returns the complement of the given automaton."
+  [x]
+  (let [fsm (->dfa (parse-automata x))
+        st (state)]
+    (dfa
+      (start fsm)
+      (set/union #{st} (set/difference (states fsm) (accept fsm)))
+      (merge (zipmap* (states fsm)
+                      #(let [tr (input->state fsm %)]
+                         (if (contains? tr default)
+                           tr
+                           (merge tr {default st}))))
+             {st {default st}})
+      (zipmap* (states fsm) #(input->actions fsm %)))))
+
+#_(defn complement
   "Returns the complement of the given automaton."
   [fsm]
   (let [fsm (->dfa fsm)

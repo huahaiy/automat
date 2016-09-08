@@ -1,4 +1,4 @@
-(defproject automat "0.2.0-SNAPSHOT"
+(defproject automat "0.2.2-SNAPSHOT"
   :description ""
   :license {:name "MIT License"
             :url "http://opensource.org/licenses/MIT"}
@@ -35,5 +35,11 @@
                                    :output-dir "target/js"
                                    :optimizations :advanced}}]
               :test-commands {"phantom" ["phantomjs" :runner "target/test.js"]}}
+  :repositories  [["sonatype"
+                  {:url "http://oss.sonatype.org/content/repositories/releases"
+                   :snapshots false}]
+                 ["private"
+                  {:url "s3p://juji-mvn-repository/releases/"
+                   :username :env :passphrase :env}]]
   :codox {:writer codox-md.writer/write-docs
           :include [automat.core automat.viz]})
