@@ -63,7 +63,7 @@
                 (recur
                   (if (= state 0)
                     (signal (stream/next-input stream ::eof))
-                    input)
+                    original-input)
                   value'
                   0
                   stream-index'
