@@ -33,12 +33,6 @@
                                    :output-dir "target/js"
                                    :optimizations :advanced}}]
               :test-commands {"phantom" ["phantomjs" :runner "target/test.js"]}}
-  :repositories  [["sonatype"
-                  {:url "http://oss.sonatype.org/content/repositories/releases"
-                   :snapshots false}]
-                 ["private"
-                  {:url "s3p://juji-mvn-repository/releases/"
-                   :username :env :passphrase :env}]]
   :codox {:source-uri "https://github.com/ztellman/automat/blob/master/{filepath}#L{line}"
           :metadata {:doc/format :markdown}
           :namespaces [automat.core automat.viz]})
