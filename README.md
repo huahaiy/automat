@@ -5,7 +5,7 @@ Automat is a Clojure and ClojureScript library for defining and using finite-sta
 These automata, once compiled, are quite fast.  An array with 100 million elements can be processed in 500ms, giving a mean transition time of 5ns.  However, Automat isn't just for high throughput use cases; it's meant to be useful wherever an FSM is necessary.
 
 ```clj
-[automat "0.2.0"]
+[automat "0.2.2"]
 ```
 
 Full documentation can be found [here](http://aleph.io/codox/automat/).
@@ -60,10 +60,10 @@ We can also combine existing automatons using the operators in `automat.core`:
 
 This represents the **union** of the two automata, and returns an automaton which will either accept `1, 2, 3` or `1, 3`.
 
-If we want to accept a range of inputs, we can use `..`:
+If we want to accept a range of inputs, we can use `range`:
 
 ```clj
-> (view [1 (a/.. 2 10) 11])
+> (view [1 (a/range 2 10) 11])
 ```
 
 ![](docs/readme-3.png)
@@ -73,8 +73,8 @@ This will accept `1, 2, 11`, `1, 3, 11`, and so on.  If we subsequently want to 
 ```clj
 > (view
     (a/and
-      [1 (a/.. 2 7) 11]
-      [1 (a/.. 6 12) 11]))
+      [1 (a/range 2 7) 11]
+      [1 (a/range 6 12) 11]))
 ```
 
 ![](docs/readme-4.png)
@@ -82,7 +82,7 @@ This will accept `1, 2, 11`, `1, 3, 11`, and so on.  If we subsequently want to 
 This represents the **intersection** of two automata, in this case giving us an automaton that either accepts `1, 6, 11` or `1, 7, 11`.  Note that if the intersection is empty, this will give us an automaton that cannot accept anything.
 
 ```clj
-> (view (a/difference (a/.. 1 10) 2 (a/... 5 6)))
+> (view (a/difference (a/range 1 10) 2 (a/range 5 6)))
 ```
 
 ![](docs/readme-7.png)
@@ -184,7 +184,7 @@ We can define reduction operations within our FSM using the `$` function:
 ```clj
 > (def f (a/compile
            [1 2 3 (a/$ :complete)]
-           {:reducers {:complete (fn [state input] :completed)}})))
+           {:reducers {:complete (fn [state input] :completed)}}))
 #'f
 > (view f)
 ```
@@ -283,6 +283,29 @@ It's also easy to extend.  Let's say that we want to save any `:product` pages t
 
 As our desired behavior gets more complicated, they can still be defined as small, composable pieces of behavior.
 
+Using this FSM would be indeed pretty straightforward :
+
+```clj
+> (def adv (partial a/advance f))
+> (-> nil
+      (adv {:page-type :cart})
+      (adv {:page-type :product})
+      (adv {:page-type :product})
+      (adv {:page-type :product})
+      (adv :anything)
+      (adv {:page-type :checkout})
+      (adv {:page-type :product})
+      (adv {:page-type :cart}) :value)
+{:offer-pages [{:page-type :cart}
+               {:page-type :product}
+               {:page-type :product}
+               {:page-type :product}
+               {:page-type :checkout}
+               {:page-type :product}
+               {:page-type :cart}],
+ :offer? true}
+```
+
 ### searching over streams
 
 `find` works similarly to regex matching.  It takes the stream of inputs, which can be a byte-array, `java.nio.Buffer`, `java.io.InputStream`, `java.io.Reader`, or a normal Clojure sequence. The inputs in the FSM correspond to elements from these streams, which will be consumed until an accept state is reached, or the end of the stream is reached.  In either case, `find` will return a new state.
@@ -310,11 +333,11 @@ When using `$` for accumulation tasks with `find` or `greedy-find`, it can be te
 ```clj
 > (def f
     (a/compile
-      [($:clear) (a/interpose-$ :conj (range 5))]
-      {:clear (constantly [])
-       :conj conj}))
+      [(a/$ :clear) (a/interpose-$ :conj (range 5))]
+      {:reducers {:clear (constantly [])
+                  :conj conj}}))
 #'f
-> (a/find f (a/start f nil) (range 5))
+> (a/find f nil (range 5))
 {:accepted? true, :checkpoint nil, :state-index 5, :start-index 0, :stream-index 5, :value [0 1 2 3 4]}
 ```
 

@@ -62,13 +62,13 @@
               (or (nil? state') (is-identical? fsm/reject state'))
               (if restart?
                 (recur
-                 (if (= state 0)
-                   (stream/next-input stream ::eof)
-                   original-input)
-                 value'
-                 0
-                 stream-index'
-                 stream-index')
+                  (if (= state 0)
+                    (stream/next-input stream ::eof)
+                    original-input)
+                  value'
+                  0
+                  stream-index'
+                  stream-index')
                 ::reject)
 
               (contains? (:accept fsm) state')
