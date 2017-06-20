@@ -37,8 +37,7 @@
              value))
 
           (let [input'        (if-let [candidates (:signal-candidates input)]
-                                (first (drop-while #(not (get-in fsm [:state->input->state state %]))
-                                                   candidates))
+                                (some candidates (keys (get-in fsm [:state->input->state state])))
                                 input)
                 state''       (get-in fsm [:state->input->state state input'])
                 state'        (or state'' (get-in fsm [:state->input->state state fsm/default]))
