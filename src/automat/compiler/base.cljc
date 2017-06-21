@@ -54,12 +54,10 @@
                                      distinct
                                      (map reducers)
                                      (remove nil?)
-                                     ;; Juji change to merge current state indexes into value
+                                     ;; Juji change to add :stream-index into value
                                      ;; assuming value is always a map
                                      (reduce #(%2 %1 original-input)
-                                             (merge value (select-keys state' [:state-index
-                                                                               :start-index
-                                                                               :stream-index]))))
+                                             (assoc value :stream-index (inc stream-index))))
                                 value)
                 stream-index' (if (= state 0)
                                 (inc stream-index)
