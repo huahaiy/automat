@@ -36,6 +36,8 @@
              stream-index
              value))
 
+          ;; Juji change to address #44
+          ;; TODO: apply the same change to :eval compiler
           (let [input'        (if-let [candidates (:signal-candidates input)]
                                 (some candidates (keys (get-in fsm [:state->input->state state])))
                                 input)
@@ -52,7 +54,12 @@
                                      distinct
                                      (map reducers)
                                      (remove nil?)
-                                     (reduce #(%2 %1 original-input) value))
+                                     ;; Juji change to merge current state indexes into value
+                                     ;; assuming value is always a map
+                                     (reduce #(%2 %1 original-input)
+                                             (merge value (select-keys state' [:state-index
+                                                                               :start-index
+                                                                               :stream-index]))))
                                 value)
                 stream-index' (if (= state 0)
                                 (inc stream-index)
