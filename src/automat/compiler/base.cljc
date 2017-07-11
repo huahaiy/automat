@@ -14,8 +14,6 @@
 
 (defn- advance [fsm state stream signal reducers restart?]
   (let [signal                                 #(if (is-identical? % ::eof) % (signal %))
-        ;; Juji change to handle tage
-        tag-mismatch                           #(= :tag-mismatch (val %))
         ^CompiledAutomatonState original-state state
         stream                                 (stream/to-stream stream)
         original-stream-index                  (.-stream-index original-state)]
@@ -66,16 +64,13 @@
                                 stream-index)]
 
             (cond
-              (or (nil? state') (is-identical? fsm/reject state')
-                  ;; Juji change to handle tags
-                  (some tag-mismatch value'))
+              (or (nil? state') (is-identical? fsm/reject state'))
               (if restart?
                 (recur
                  (if (= state 0)
                    (stream/next-input stream ::eof)
                    original-input)
-                 ;; Juji change to handle tags
-                 (into {} (remove tag-mismatch value'))
+                 value'
                  0
                  stream-index'
                  stream-index')
