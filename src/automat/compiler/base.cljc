@@ -43,6 +43,8 @@
                                 input)
                 state''       (get-in fsm [:state->input->state state input'])
                 state'        (or state'' (get-in fsm [:state->input->state state fsm/default]))
+                ;; Juji change to skip :skip-token
+                state'        (when (not= input' :skip-token) state')
                 default?      (not (identical? state'' state'))
                 value'        (if state'
                                 (->> (concat
