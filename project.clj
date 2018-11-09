@@ -1,13 +1,13 @@
-(defproject automat "0.2.8-SNAPSHOT"
+(defproject automat "0.2.10"
   :description ""
   :license {:name "MIT License"
             :url "http://opensource.org/licenses/MIT"}
-  :dependencies [[rhizome "0.2.7"]
+  :dependencies [[rhizome "0.2.9"]
                  [primitive-math "0.1.6"]
-                 [potemkin "0.4.3"]
+                 [potemkin "0.4.5"]
                  [proteus "0.1.6"]]
-  :profiles {:dev {:dependencies [[org.clojure/clojure "1.8.0"]
-                                  [org.clojure/clojurescript "1.9.562"]
+  :profiles {:dev {:dependencies [[org.clojure/clojure "1.9.0"]
+                                  [org.clojure/clojurescript "1.10.439"]
                                   [org.clojure/test.check "0.9.0"]
                                   [criterium "0.4.4"]]
                    ;:prep-tasks ["compile" "javac"]

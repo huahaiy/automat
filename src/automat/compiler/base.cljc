@@ -57,9 +57,10 @@
                                      (map reducers)
                                      (remove nil?)
                                      ;; Juji change to add :stream-index into value
-                                     ;; assuming value is always a map
                                      (reduce #(%2 %1 original-input)
-                                             (assoc value :stream-index (inc stream-index))))
+                                             (if (vector? value)
+                                               value
+                                               (assoc value :stream-index (inc stream-index)))))
                                 value)
                 stream-index' (if (= state 0)
                                 (inc stream-index)
